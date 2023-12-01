@@ -1,0 +1,28 @@
+name: Check Mergability
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  check-merge-ability:
+    runs-on: ubuntu-latest
+    needs: comment-job
+    steps:
+      - name: Check PR Comment
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const pr = await github.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+
+            const comment = pr.data.body;
+
+            if (!comment.includes('I acknowledge the instructions.')) {
+              core.setFailed('PR cannot be merged until the acknowledgment is present in the comment.');
+            }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
