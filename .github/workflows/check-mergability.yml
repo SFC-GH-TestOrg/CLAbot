@@ -12,15 +12,13 @@ jobs:
         uses: actions/github-script@v7.0.1
         with:
           script: |
-            const pr = await github.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number,
-            });
+            const comment = context.payload.comment.body;
+            const commentAuthor = context.payload.comment.user.login;
+            const prAuthor = context.payload.issue.user.login;
 
-            const comment = pr.data.body;
-
-            if (!comment.includes('I acknowledge the instructions.')) {
+            if (commentAuthor !== prAuthor) {
+              core.setFailed('PR cannot be merged until the acknowledgment is present in the comment from the PR author.');
+            } else if (!comment.includes('I acknowledge the instructions.')) {
               core.setFailed('PR cannot be merged until the acknowledgment is present in the comment.');
             }
         env:
