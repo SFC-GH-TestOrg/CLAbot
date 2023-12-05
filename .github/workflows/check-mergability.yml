@@ -13,47 +13,48 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const comment = context.payload.comment.body;
-            const commentAuthor = context.payload.comment.user.login;
+            async () => {
+              const comment = context.payload.comment.body;
+              const commentAuthor = context.payload.comment.user.login;
 
-            let state = 'success';
-            let description = 'The PR can be merged.';
+              let state = 'success';
+              let description = 'The PR can be merged.';
 
-            const issue = await github.rest.issues.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
+              const issue = await github.rest.issues.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+              });
 
-            if (!issue.data.pull_request) {
-              console.log('The comment is not on a pull request.');
-              return;
+              if (!issue.data.pull_request) {
+                console.log('The comment is not on a pull request.');
+                return;
+              }
+
+              const pr = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.issue.number,
+              }).catch(err => {
+                console.log('Error getting pull request:', err);
+              });
+
+              const prAuthor = pr.data.user.login;
+
+              if (commentAuthor !== prAuthor) {
+                state = 'failure';
+                description = 'PR cannot be merged until the acknowledgment is present in the comment from the PR author.';
+              } else if (!comment.includes('I acknowledge the instructions.')) {
+                state = 'failure';
+                description = 'PR cannot be merged until the acknowledgment is present in the comment.';
+              }
+
+              await github.rest.repos.createCommitStatus({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                sha: pr.data.head.sha,
+                state: state,
+                description: description,
+                context: 'Check Mergability',
+              });
             }
-
-            const pr = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number,
-            }).catch(err => {
-            console.log('Error getting pull request:', err);
-            });
-            });
-
-            const prAuthor = pr.data.user.login;
-
-            if (commentAuthor !== prAuthor) {
-              state = 'failure';
-              description = 'PR cannot be merged until the acknowledgment is present in the comment from the PR author.';
-            } else if (!comment.includes('I acknowledge the instructions.')) {
-              state = 'failure';
-              description = 'PR cannot be merged until the acknowledgment is present in the comment.';
-            }
-
-            await github.rest.repos.createCommitStatus({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              sha: pr.data.head.sha,
-              state: state,
-              description: description,
-              context: 'Check Mergability',
-            });
