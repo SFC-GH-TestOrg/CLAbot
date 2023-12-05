@@ -1,8 +1,6 @@
 name: Check Mergability
 
 on:
-  pull_request:
-    types: [opened,edited]
   issue_comment:
     types: [created, edited]
 
@@ -13,15 +11,32 @@ jobs:
       - name: Check PR Comment
         uses: actions/github-script@v7.0.1
         with:
+          ithub-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const comment = context.payload.comment.body;
             const commentAuthor = context.payload.comment.user.login;
             const prAuthor = context.payload.issue.user.login;
 
+            let conclusion = 'success';
+            let output = {
+              title: 'Check Mergability',
+              summary: 'The PR can be merged.',
+            };
+
             if (commentAuthor !== prAuthor) {
-              core.setFailed('PR cannot be merged until the acknowledgment is present in the PR comment from the PR author.');
+              conclusion = 'failure';
+              output.summary = 'PR cannot be merged until the acknowledgment is present in the comment from the PR author.';
             } else if (!comment.includes('I acknowledge the instructions.')) {
-              core.setFailed('PR cannot be merged until the acknowledgment is present in the PR comment.');
+              conclusion = 'failure';
+              output.summary = 'PR cannot be merged until the acknowledgment is present in the comment.';
             }
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: 'Check Mergability',
+              head_sha: context.payload.pull_request.head.sha,
+              status: 'completed',
+              conclusion: conclusion,
+              output: output,
+            });
