@@ -11,7 +11,41 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4.1.1
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'latest'
+
+      - name: Install Dependencies
+        run: npm install yaml
+
+      - name: Get PR author's email
+        id: pr_author_email
+        uses: actions/github-script@v7.0.1
+        with:
+          script: |
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+            const user = await github.rest.users.getByUsername({
+              username: pr.data.user.login
+            });
+            let email = user.data.email ;
+            return email;
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check if author is whitelisted
+        id: check
+        run: node scripts/check-whitelist.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_AUTHOR_EMAIL: ${{ steps.pr_author_email.outputs.email }}
+
       - name: Comment on PR
+        if: steps.check.outputs.is_whitelisted == 'false'
         uses: actions/github-script@v7.0.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -30,3 +64,7 @@ jobs:
             });
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Report success
+        if: steps.check.outputs.is_whitelisted == 'true'
+        run: echo "PR author is whitelisted, skipping comment."
