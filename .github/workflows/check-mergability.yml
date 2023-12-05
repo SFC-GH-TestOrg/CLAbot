@@ -13,7 +13,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            async () => {
+            (async () => {
               const comment = context.payload.comment.body;
               const commentAuthor = context.payload.comment.user.login;
 
@@ -60,4 +60,4 @@ jobs:
                 console.log('Error creating commit status:', err);
               });
               console.log('Commit status created:', result);
-            }
+            })();
