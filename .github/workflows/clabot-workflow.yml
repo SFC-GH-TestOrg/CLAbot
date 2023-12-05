@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4.1.1
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -32,7 +32,8 @@ jobs:
             const user = await github.rest.users.getByUsername({
               username: pr.data.user.login
             });
-            return email: user.data.email ;
+            let email = user.data.email ;
+            return email;
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
