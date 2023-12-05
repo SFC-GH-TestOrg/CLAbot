@@ -34,6 +34,9 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.issue.number,
+            }).catch(err => {
+            console.log('Error getting pull request:', err);
+            });
             });
 
             const prAuthor = pr.data.user.login;
