@@ -15,10 +15,28 @@ jobs:
           script: |
             const comment = context.payload.comment.body;
             const commentAuthor = context.payload.comment.user.login;
-            const prAuthor = context.payload.issue.user.login;
 
             let state = 'success';
             let description = 'The PR can be merged.';
+
+            const issue = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            if (!issue.data.pull_request) {
+              console.log('The comment is not on a pull request.');
+              return;
+            }
+
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+
+            const prAuthor = pr.data.user.login;
 
             if (commentAuthor !== prAuthor) {
               state = 'failure';
@@ -27,12 +45,6 @@ jobs:
               state = 'failure';
               description = 'PR cannot be merged until the acknowledgment is present in the comment.';
             }
-
-            const pr = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number,
-            });
 
             await github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
