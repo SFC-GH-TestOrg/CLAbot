@@ -9,9 +9,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'latest'
+
+      - name: Install Dependencies
+        run: npm install yaml
+
+      - name: Check if author is whitelisted
+        id: check
+        run: |
+          const fs = require('fs');
+          const yaml = require('yaml');
+
+          const whitelist = yaml.parse(fs.readFileSync('email-whitelist.yml', 'utf8'));
+          const prAuthorEmail = 'pr.author.email@example.com'; // Replace this with the PR author's email
+
+          const isWhitelisted = whitelist.domains.some(domain => prAuthorEmail.endsWith(`@${domain}`)) || whitelist.individual_accounts.includes(prAuthorEmail);
+
+          console.log(`Is PR author whitelisted? ${isWhitelisted}`);
+
+          console.log(`::set-output name=is_whitelisted::${isWhitelisted}`);
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Comment on PR
+        if: steps.check.outputs.is_whitelisted == 'false'
         uses: actions/github-script@v7.0.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -30,3 +56,7 @@ jobs:
             });
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Report success
+        if: steps.check.outputs.is_whitelisted == 'true'
+        run: echo "PR author is whitelisted, skipping comment."
