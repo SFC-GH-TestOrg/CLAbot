@@ -2,8 +2,7 @@ name: PR Bot Workflow
 
 on:
   pull_request:
-    types:
-      - opened
+    types: [opened, edited, synchronize]
 
 jobs:
   comment-job:
