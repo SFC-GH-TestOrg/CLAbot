@@ -127,3 +127,6 @@ jobs:
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Report success
+        if: steps.check.outputs.is_whitelisted == 'true'
+        run: echo "PR author is whitelisted, skipping check merge."
