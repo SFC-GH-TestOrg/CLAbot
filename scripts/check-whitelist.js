@@ -5,6 +5,7 @@ const yaml = require('yaml');
 
 const whitelist = yaml.parse(fs.readFileSync('email-whitelist.yml', 'utf8'));
 const prAuthorEmail = process.env.PR_AUTHOR_EMAIL;
+console.log(`PR author email: ${prAuthorEmail}`);
 
 const isWhitelisted = whitelist.domains.some(domain => prAuthorEmail.endsWith(`@${domain}`)) || whitelist.individual_accounts.some(account => account.email === prAuthorEmail);
 
