@@ -67,4 +67,29 @@ jobs:
 
       - name: Report success
         if: steps.check.outputs.is_whitelisted == 'true'
-        run: echo "PR author is whitelisted, skipping comment."
+        uses: actions/github-script@v7.0.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            (async ()=>{
+            const pr = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.issue.number,
+              }).catch(err => {
+                console.log('Error getting pull request:', err);
+              });
+            
+            let result = await github.rest.repos.createCommitStatus({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                sha: pr.data.head.sha,
+                state: 'success',
+                description: 'Author is already whitelisted',
+                context: 'Check Mergability',
+              }).catch(err => {
+                console.log('Error creating commit status:', err);
+              });
+              console.log('Commit status created:', result);
+              core.setOutput('state', result.data.state);
+            })();
