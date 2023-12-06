@@ -119,6 +119,7 @@ jobs:
 
           # Format the new item
           newItem=$(printf "{email: '%s', prNumber: '%s', commentNumber: '%s', timestamp: '%s'}" "${{ steps.pr_author.outputs.email }}" "${{ github.event.pull_request.number }}" "${{ github.event.comment.id }}" "${{ github.event.comment.created_at }}")
+          echo "New item: $newItem"
 
           # Add the PR author's email to the individual_accounts list
           yq e ".individual_accounts += [$newItem]" email-whitelist.yml > email-whitelist-updated.yml
