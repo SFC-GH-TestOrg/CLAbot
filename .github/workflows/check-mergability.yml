@@ -118,10 +118,10 @@ jobs:
           echo "Whitelist: $whitelist"
 
           # Add the PR author's email to the individual_accounts list
-          whitelist.individual_accounts+=[{email: '${{ steps.pr_author.outputs.email }}', prNumber: '${{ github.event.pull_request.number }}', commentNumber: '${{ github.event.comment.id }}', timestamp: '${{ github.event.comment.created_at }}'}]
+          yq e ".individual_accounts += [{email: '${{ steps.pr_author.outputs.email }}', prNumber: '${{ github.event.pull_request.number }}', commentNumber: '${{ github.event.comment.id }}', timestamp: '${{ github.event.comment.created_at }}'}]" email-whitelist.yml > email-whitelist-updated.yml
 
           # Write the updated whitelist back to the email-whitelist.yml file
-          echo "$whitelist" | yq e -P > email-whitelist.yml
+          mv email-whitelist-updated.yml email-whitelist.yml
 
           # Configure git
           git config --global user.name 'GitHub Actions'
