@@ -118,6 +118,10 @@ jobs:
           echo "Whitelist: $whitelist"
 
           # Format the new item
+          echo "PR author email: ${{ steps.pr_author_email.outputs.email }}"
+          echo "PR number: ${{ github.event.pull_request.number }}"
+          echo "Comment number: ${{ github.event.comment.id }}"
+          echo "Timestamp: ${{ github.event.comment.created_at }}"
           newItem=$(printf "email: %s\nprNumber: %s\ncommentNumber: %s\ntimestamp: %s" "${{ steps.pr_author.outputs.email }}" "${{ github.event.pull_request.number }}" "${{ github.event.comment.id }}" "${{ github.event.comment.created_at }}")
           echo "New item: $newItem"
 
