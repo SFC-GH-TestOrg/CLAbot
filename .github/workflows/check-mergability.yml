@@ -118,8 +118,11 @@ jobs:
           whitelist=$(yq e . email-whitelist.yml)
 
           # Format the new item
-          newItem=$(printf "\n  - email: %s\n    prNumber: %s\n    commentNumber: %s\n    timestamp: %s" "${{ steps.pr_author_email.outputs.email }}" "${{ steps.pr_author_email.outputs.prNumber }}" "${{ github.event.comment.id }}" "${{ github.event.comment.created_at }}")
-          echo "New item: $newItem"
+          newItem= {
+            email: ${{ steps.pr_author_email.outputs.email }},
+            prNumber: ${{ steps.pr_author_email.outputs.prNumber }},
+            commentNumber: ${{ github.event.comment.id }},
+            timestamp: ${{ github.event.comment.created_at }}
 
           # Add the PR author's email to the individual_accounts list using yq
           yq eval ".individual_accounts += $newItem" email-whitelist.yml > email-whitelist-updated.yml
