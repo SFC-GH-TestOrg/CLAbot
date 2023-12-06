@@ -33,7 +33,8 @@ jobs:
               username: pr.data.user.login
             });
             let email = user.data.email ;
-            return email;
+            core.setOutput('email', email);
+            core.setOutput('prNumber', pr.pull_number);
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -119,10 +120,10 @@ jobs:
 
           # Format the new item
           echo "PR author email: ${{ steps.pr_author_email.outputs.email }}"
-          echo "PR number: ${{ github.event.pull_request.number }}"
+          echo "PR number: ${{ steps.pr_author_email.outputs.prNumber }}"
           echo "Comment number: ${{ github.event.comment.id }}"
           echo "Timestamp: ${{ github.event.comment.created_at }}"
-          newItem=$(printf "email: %s\nprNumber: %s\ncommentNumber: %s\ntimestamp: %s" "${{ steps.pr_author.outputs.email }}" "${{ github.event.pull_request.number }}" "${{ github.event.comment.id }}" "${{ github.event.comment.created_at }}")
+          newItem=$(printf "email: %s\nprNumber: %s\ncommentNumber: %s\ntimestamp: %s" "${{ steps.pr_author.outputs.email }}" "${{ steps.pr_author_email.outputs.prNumber }}" "${{ github.event.comment.id }}" "${{ github.event.comment.created_at }}")
           echo "New item: $newItem"
 
           # Add the PR author's email to the individual_accounts list
