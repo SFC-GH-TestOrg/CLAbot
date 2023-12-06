@@ -113,33 +113,13 @@ jobs:
 
       - name: Update email whitelist
         if: ${{ steps.check.outputs.is_whitelisted == 'false' && steps.check_pr_comment.outputs.state == 'success' }}
-        run: |
-          # Parse the email-whitelist.yml file
-          whitelist=$(yq e . email-whitelist.yml)
-
-          # Format the new item
-          newItem= {
-            email: ${{ steps.pr_author_email.outputs.email }},
-            prNumber: ${{ steps.pr_author_email.outputs.prNumber }},
-            commentNumber: ${{ github.event.comment.id }},
-            timestamp: ${{ github.event.comment.created_at }}
-
-          # Add the PR author's email to the individual_accounts list using yq
-          yq eval ".individual_accounts += $newItem" email-whitelist.yml > email-whitelist-updated.yml
-
-          # Write the updated whitelist back to the email-whitelist.yml file
-          mv email-whitelist-updated.yml email-whitelist.yml
-
-          # Configure git
-          git config --global user.name 'GitHub Actions'
-          git config --global user.email 'actions@github.com'
-
-          # Commit the changes
-          git add email-whitelist.yml
-          git commit -m 'Update email whitelist'
-          git push
+        run: node scripts/update-whitelist.js
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EMAIL: ${{ steps.pr_author_email.outputs.email }}
+          PR_NUMBER: ${{ steps.pr_author_email.outputs.prNumber }}
+          COMMENT_ID: ${{ github.event.comment.id }}
+          TIMESTAMP: ${{ github.event.comment.created_at }}
 
       - name: Report success
         if: ${{ steps.check.outputs.is_whitelisted == 'true' }}
