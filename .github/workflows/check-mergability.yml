@@ -122,8 +122,8 @@ jobs:
           echo "New item: $newItem"
 
           # Add the PR author's email to the individual_accounts list using yq
-          yq eval-all '- select(fileIndex == 0) * input | select(fileIndex == 1)' email-whitelist.yml - <<< "$newItem" > email-whitelist-updated.yml
-          
+          yq eval ".individual_accounts += [$newItem]" email-whitelist.yml > email-whitelist-updated.yml
+
           # Write the updated whitelist back to the email-whitelist.yml file
           mv email-whitelist-updated.yml email-whitelist.yml
 
