@@ -1,6 +1,6 @@
 const fs = require('fs');
 const yaml = require('js-yaml');
-const git = require('simple-git/promise'); // Note the /promise
+//const git = require('simple-git/promise'); // Note the /promise
 
 // Make the main function async
 async function main() {
@@ -23,13 +23,8 @@ async function main() {
   let yamlStr = yaml.dump(whitelist);
   fs.writeFileSync('email-whitelist.yml', yamlStr, 'utf8');
 
-  // Configure git and commit the changes
-  const gitOps = git();
-  await gitOps.addConfig('user.name', 'GitHub Actions');
-  await gitOps.addConfig('user.email', 'actions@github.com');
-  await gitOps.add('email-whitelist.yml');
-  await gitOps.commit('Update email whitelist');
-  await gitOps.push('origin', 'main'); // replace 'main' with your branch name
+  // Print the new whitelist
+  console.log(yamlStr);
 }
 
 // Call the main function
