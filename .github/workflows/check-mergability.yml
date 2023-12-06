@@ -100,12 +100,7 @@ jobs:
               console.log('Commit status created:', result);
               core.setOutput('state', result.data.state);
             })();
-
-      # - name: Install yq
-      #   run: |
-      #     sudo add-apt-repository ppa:rmescandon/yq
-      #     sudo apt update
-      #     sudo apt install yq -y
+            
       - name: Print values
         run: |
           echo "Is whitelisted: ${{ steps.check.outputs.is_whitelisted }}"
