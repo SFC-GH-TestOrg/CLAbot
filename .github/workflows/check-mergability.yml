@@ -99,11 +99,11 @@ jobs:
               console.log('Commit status created:', result);
             })();
 
-      - name: Install yq
-        run: |
-          sudo add-apt-repository ppa:rmescandon/yq
-          sudo apt update
-          sudo apt install yq -y
+      # - name: Install yq
+      #   run: |
+      #     sudo add-apt-repository ppa:rmescandon/yq
+      #     sudo apt update
+      #     sudo apt install yq -y
 
       - name: Update email whitelist
         if: ${{ steps.check.outputs.is_whitelisted == 'false' && steps.check_pr_comment.outputs.state == 'success' }}
