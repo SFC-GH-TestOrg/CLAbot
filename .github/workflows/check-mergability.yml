@@ -123,7 +123,7 @@ jobs:
           echo "PR number: ${{ steps.pr_author_email.outputs.prNumber }}"
           echo "Comment number: ${{ github.event.comment.id }}"
           echo "Timestamp: ${{ github.event.comment.created_at }}"
-          newItem=$(printf "email: %s\nprNumber: %s\ncommentNumber: %s\ntimestamp: %s" "${{ steps.pr_author.outputs.email }}" "${{ steps.pr_author_email.outputs.prNumber }}" "${{ github.event.comment.id }}" "${{ github.event.comment.created_at }}")
+          newItem=$(printf "\nemail: %s\nprNumber: %s\ncommentNumber: %s\ntimestamp: %s" "${{ steps.pr_author_email.outputs.email }}" "${{ steps.pr_author_email.outputs.prNumber }}" "${{ github.event.comment.id }}" "${{ github.event.comment.created_at }}")
           echo "New item: $newItem"
 
           # Add the PR author's email to the individual_accounts list
