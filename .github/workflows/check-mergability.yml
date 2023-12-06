@@ -17,7 +17,7 @@ jobs:
           node-version: 'latest'
 
       - name: Install Dependencies
-        run: npm install yaml js-yaml simple-git/promise
+        run: npm install yaml js-yaml
 
       - name: Get PR author's email
         id: pr_author_email
