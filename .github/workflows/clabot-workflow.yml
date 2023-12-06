@@ -33,7 +33,7 @@ jobs:
               username: pr.data.user.login
             });
             let email = user.data.email ;
-            return email;
+            core.setOutput('email', email);
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
