@@ -50,7 +50,6 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const core = require('@actions/core');
             (async () => {
               const comment = context.payload.comment.body;
               const commentAuthor = context.payload.comment.user.login;
