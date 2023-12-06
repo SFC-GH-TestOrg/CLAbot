@@ -106,10 +106,11 @@ jobs:
           sudo apt install yq -y
 
       - name: Update email whitelist
-        if: steps.check.outputs.is_whitelisted == 'false' && steps.check_pr_comment.outputs.state == 'success'
+        if: ${{ steps.check.outputs.is_whitelisted == 'false' && steps.check_pr_comment.outputs.state == 'success' }}
         run: |
           # Parse the email-whitelist.yml file
           whitelist=$(yq e . email-whitelist.yml)
+          echo "Whitelist: $whitelist"
 
           # Add the PR author's email to the individual_accounts list
           whitelist.individual_accounts+=[{email: '${{ steps.pr_author.outputs.email }}', prNumber: '${{ github.event.pull_request.number }}', commentNumber: '${{ github.event.comment.id }}', timestamp: '${{ github.event.comment.created_at }}'}]
@@ -129,5 +130,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Report success
-        if: steps.check.outputs.is_whitelisted == 'true'
+        if: ${{ steps.check.outputs.is_whitelisted == 'true' }}
         run: echo "PR author is whitelisted, skipping check merge."
