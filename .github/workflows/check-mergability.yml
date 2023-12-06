@@ -34,7 +34,7 @@ jobs:
             });
             let email = user.data.email ;
             core.setOutput('email', email);
-            core.setOutput('prNumber', pr.pull_number);
+            core.setOutput('prNumber', context.issue.number);
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
