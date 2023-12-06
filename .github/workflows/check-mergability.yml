@@ -96,6 +96,7 @@ jobs:
               }).catch(err => {
                 console.log('Error creating commit status:', err);
               });
+              return result;
               console.log('Commit status created:', result);
             })();
 
