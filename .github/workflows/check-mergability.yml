@@ -96,8 +96,8 @@ jobs:
               }).catch(err => {
                 console.log('Error creating commit status:', err);
               });
-              return result;
               console.log('Commit status created:', result);
+              return result;
             })();
 
       # - name: Install yq
@@ -105,9 +105,13 @@ jobs:
       #     sudo add-apt-repository ppa:rmescandon/yq
       #     sudo apt update
       #     sudo apt install yq -y
+      - name: Print values
+        run: |
+          echo "Is whitelisted: ${{ steps.check.outputs.is_whitelisted }}"
+          echo "State: ${{ steps.check_pr_comment.outputs.result.state }}"
 
       - name: Update email whitelist
-        if: ${{ steps.check.outputs.is_whitelisted == 'false' && steps.check_pr_comment.outputs.state == 'success' }}
+        if: ${{ steps.check.outputs.is_whitelisted == 'false' && steps.check_pr_comment.outputs.result.state == 'success' }}
         run: |
           # Parse the email-whitelist.yml file
           whitelist=$(yq e . email-whitelist.yml)
