@@ -6,10 +6,6 @@ individual_accounts:
     prNumber: 41
     commentNumber: 1
     timestamp: '2021-08-04T18:00:00Z'
-  - email: subham.misra@snowflake.com
-    prNumber: '54'
-    commentNumber: '1843282679'
-    timestamp: '2023-12-06T16:51:52Z'
   - email: sourov.ghosh@snowflake.com
     prNumber: '54'
     commentNumber: '1843282679'
