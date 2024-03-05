@@ -1,8 +1,7 @@
 name: PR Bot Workflow
 
 on:
-  pull_request:
-    types: [opened, edited, synchronize]
+  workflow_call:
 
 jobs:
   comment-job:
