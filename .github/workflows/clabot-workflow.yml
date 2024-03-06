@@ -44,7 +44,7 @@ jobs:
 
       - name: Check if author is whitelisted
         id: check
-        run: node scripts/check-whitelist.js
+        run: node SFC-GH-TestOrg/CLAbot/scripts/check-whitelist.js
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_AUTHOR_EMAIL: ${{ steps.pr_author_email.outputs.email }}
