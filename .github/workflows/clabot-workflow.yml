@@ -9,6 +9,11 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4.1.1
+      - name: Checkout CLAbot repository
+        uses: actions/checkout@v4.1.1
+        with:
+          repository: 'SFC-GH-TestOrg/CLAbot'
+          ref: 'main'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -36,16 +41,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Checkout CLAbot repository
-        uses: actions/checkout@v4.1.1
-        with:
-          repository: 'SFC-GH-TestOrg/CLAbot'
-          ref: 'main'
-          path: 'CLAbot'
+      
 
       - name: Check if author is whitelisted
         id: check
-        run: node CLAbot/scripts/check-whitelist.js
+        run: node scripts/check-whitelist.js
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_AUTHOR_EMAIL: ${{ steps.pr_author_email.outputs.email }}
