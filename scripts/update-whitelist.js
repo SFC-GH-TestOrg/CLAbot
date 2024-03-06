@@ -31,6 +31,8 @@ async function main() {
   const gitInstance = git();
   await gitInstance.fetch();
   await gitInstance.checkout(branchName);
+  await gitInstance.addConfig('user.name', 'CLAbot');
+  await gitInstance.addConfig('user.email', 'CLAbot@snowflake.com');
   await gitInstance.add('email-whitelist.yml');
   await gitInstance.commit('Updated email whitelist');
   await gitInstance.push('origin', branchName);
