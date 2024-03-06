@@ -1,6 +1,6 @@
 const fs = require('fs');
 const yaml = require('js-yaml');
-//const git = require('simple-git/promise'); // Note the /promise
+const git = require('simple-git'); // Note the /promise
 
 // Make the main function async
 async function main() {
@@ -25,6 +25,14 @@ async function main() {
 
   // Print the new whitelist
   console.log(yamlStr);
+  // Commit the updated file
+  const remoteRepo = 'https://github.com/SFC-GH-TestOrg/CLAbot.git'
+  const branchName = 'staging';
+  const gitInstance = git();
+  await gitInstance.checkout(branchName);
+  await gitInstance.add('email-whitelist.yml');
+  await gitInstance.commit('Updated email whitelist');
+  await gitInstance.push('origin', branchName);
 }
 
 // Call the main function
