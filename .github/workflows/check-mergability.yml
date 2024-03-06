@@ -115,7 +115,7 @@ jobs:
         if: ${{ steps.check.outputs.is_whitelisted == 'false' && steps.check_pr_comment.outputs.state == 'success' }}
         run: node scripts/update-whitelist.js
         env:
-          CLABOT: ${{ secrets.CLABOT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           EMAIL: ${{ steps.pr_author_email.outputs.email }}
           PR_NUMBER: ${{ steps.pr_author_email.outputs.prNumber }}
           COMMENT_ID: ${{ github.event.comment.id }}
