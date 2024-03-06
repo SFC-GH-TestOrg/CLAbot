@@ -41,6 +41,7 @@ jobs:
         with:
           repository: 'SFC-GH-TestOrg/CLAbot'
           ref: 'main'
+          path: 'CLAbot'
 
       - name: Check if author is whitelisted
         id: check
