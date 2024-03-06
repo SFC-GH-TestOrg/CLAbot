@@ -29,6 +29,7 @@ async function main() {
   const remoteRepo = 'https://github.com/SFC-GH-TestOrg/CLAbot.git'
   const branchName = 'staging';
   const gitInstance = git();
+  await gitInstance.fetch();
   await gitInstance.checkout(branchName);
   await gitInstance.add('email-whitelist.yml');
   await gitInstance.commit('Updated email whitelist');
