@@ -1,8 +1,8 @@
 name: Check Mergability
 
 on:
-  issue_comment:
-    types: [created, edited]
+  workflow_call:
+    
 
 jobs:
   check-whitelist-and-check-mergeability:
@@ -17,7 +17,7 @@ jobs:
           node-version: 'latest'
 
       - name: Install Dependencies
-        run: npm install yaml js-yaml
+        run: npm install yaml js-yaml simple-git
 
       - name: Get PR author's email
         id: pr_author_email
